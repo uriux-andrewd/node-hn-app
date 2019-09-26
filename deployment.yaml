@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "node-hn-app"
+  namespace: "default"
+  labels:
+    app: "node-hn-app"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "node-hn-app"
+  template:
+    metadata:
+      labels:
+        app: "node-hn-app"
+    spec:
+      containers:
+      - name: "node-hn-app-sha256"
+        image: "gcr.io/smithery-1562771139878/node-hn-app@sha256:8fcd65ccdede43d88e71258ae93f4b775341cbf825333cfb1a165fa45a67882a"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "node-hn-app-hpa"
+  namespace: "default"
+  labels:
+    app: "node-hn-app"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "node-hn-app"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80

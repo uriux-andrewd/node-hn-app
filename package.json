@@ -1,0 +1,65 @@
+{
+  "name": "node-hn-app",
+  "description": "a simple express app for demonstrating testing and code coverage",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=6.11.x"
+  },
+  "private": true,
+  "main": "src/server.js",
+  "config": {
+    "PROJECT_ID": "[my-project]",
+    "APP_NAME": "node-hn-app",
+    "APP_NAMESPACE": "default",
+    "CLUSTER_NAME": "hn-app-demo",
+    "COMPUTE_REGION": "us-central1",
+    "COMPUTE_ZONE": "us-central1-a"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "debug": "nodemon --inspect src/server.js",
+    "test": "npm run lint && npm run jest",
+    "test:e2e": "jest --runInBand __int_tests__/*.test.js",
+    "jest": "jest --coverage __tests__/*.test.js",
+    "lint": "eslint src/** __int_tests__/*",
+    "prettier": "prettier --write src/*.js src/__mocks__/*.js __{tests,int_tests}__/*.js",
+    "docker:build-container": "docker build -t gcr.io/$npm_package_config_PROJECT_ID/$npm_package_config_APP_NAME .",
+    "docker:run-container": "docker run --rm -it -p 3000:3000 gcr.io/$npm_package_config_PROJECT_ID/$npm_package_config_APP_NAME",
+    "gcp:configure-docker": "gcloud auth configure-docker",
+    "gcp:configure-compute": "gcloud config set compute/region $npm_package_config_COMPUTE_REGION && gcloud config set compute/zone $npm_package_config_COMPUTE_ZONE",
+    "gcp:init-defaults": "gcloud config set project $npm_package_config_PROJECT_ID && npm run gcp:configure-compute && npm run gcp:configure-docker",
+    "gcp:enable-apis": "gcloud services enable cloudbuild.googleapis.com containerregistry.googleapis.com container.googleapis.com",
+    "gcp:build-container-dockerfile": "gcloud builds submit --tag gcr.io/$npm_package_config_PROJECT_ID/$npm_package_config_APP_NAME .",
+    "gcp:build-container-cloudbuild": "gcloud builds submit --config cloudbuild.yaml .",
+    "gcp:create-cluster": "gcloud container clusters create $npm_package_config_CLUSTER_NAME --zone $npm_package_config_COMPUTE_ZONE --machine-type n1-standard-2 --num-nodes 1",
+    "gcp:enable-cluster-access": "PROJECT_NUMBER=$(gcloud projects list --filter=$npm_package_config_PROJECT_ID --format=\"value(PROJECT_NUMBER)\") npm run __gcp:enable-cluster-access:get-svc-acct",
+    "__gcp:enable-cluster-access:get-svc-acct": "SVC_ACCT=${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com npm run __gcp:enable-cluster-access:set-iam-policy",
+    "__gcp:enable-cluster-access:set-iam-policy": "gcloud projects add-iam-policy-binding $npm_package_config_PROJECT_ID --member=serviceAccount:$SVC_ACCT --role=roles/container.developer",
+    "gcp:deploy-latest-image": "gcloud alpha builds deploy gke --cluster=$npm_package_config_CLUSTER_NAME --location=$npm_package_config_COMPUTE_ZONE --expose=3000 --tag=gcr.io/$npm_package_config_PROJECT_ID/$npm_package_config_APP_NAME:latest --app-name=$npm_package_config_APP_NAME --namespace=$npm_package_config_APP_NAMESPACE .",
+    "gcp:delete-cluster": "gcloud container clusters delete $npm_package_config_CLUSTER_NAME"
+  },
+  "dependencies": {
+    "ejs": "~2.5.7",
+    "express": "~4.16.2",
+    "got": "^8.0.1",
+    "serve-favicon": "^2.4.5"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.1",
+    "jest": "^21.2.1",
+    "nodemon": "^1.12.5",
+    "prettier": "^1.9.1",
+    "supertest": "~3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arubayat/node-hn-app"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose": true
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}

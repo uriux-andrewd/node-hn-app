@@ -1,0 +1,24 @@
+<form role="form" action="/">
+  <div class="row">
+    <div class="four columns">
+      <label for="storyCount">Number of stories</label>
+      <input type="number" min="1" max="50" step="1" class="u-full-width" id="storyCount" name="storyCount"
+        placeholder="10" value="<%= storyCountParameter %>">
+    </div>
+    <div class="four columns">
+      <label for="storyType">Story type</label>
+      <select class="u-full-width" id="storyType" name="storyType">
+        <% var storyTypes = [ { value: 'Best' }, { value: 'Top' }, { value: 'New' } ] %>
+        <% storyTypes.forEach(function (storyType) { %>
+          <option value="<%= storyType.value.toLowerCase() %>"
+            <%= storyType.value.toLowerCase() == storyTypeParameter ? "selected" : "" %>>
+            <%= storyType.value %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="four columns">
+      <button type="submit" class="button-primary">Show stories</button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,21 @@
+steps:
+
+# Use the npm build step to install dependencies and build/test the application
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['test']  
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['run', 'test:e2e']
+
+# Use docker to build an application container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/$PROJECT_ID/${_APP_NAME}", "."]
+
+# If the build is successful, the resulting image is pushed to Container Registry and is associated with the build metadata.
+images:
+- gcr.io/$PROJECT_ID/${_APP_NAME}
+
+# Default values for user defined substitutions. Use the --substitutions flag in the gcloud builds submit command to override defaults.
+substitutions:
+  _APP_NAME: node-hn-app

@@ -1,0 +1,20 @@
+<% include _header.html %>
+
+<div class="container">
+
+  <% include _search_form.html %>
+  <% if (invalidParameters) { %>
+    <div class="alert alert-danger">
+      <h6 class="section-header">Invalid value for "storyType" or "storyCount" input parameters</h6>
+      Story type must equal "new", "top" or "best".
+      Story count must be number greater than 0 and less than or equal to 50.
+    </div>
+  <% } %>
+
+  <% if (searchResults) { %>
+    <% include _search_results.html %>
+  <% } %>
+
+</div>
+
+<% include _footer.html %>

@@ -1,0 +1,16 @@
+<div class="results">
+    <h6 class="section-header">Search results</h6>
+    <% if (stories.length) { %>
+    
+      <ul>
+        <% stories.forEach(function (story) { %>
+          <li class="list-unstyled">
+            <a href="<%= story.url %>"><%= story.title %></a>
+          </li>
+        <% }) %>
+      </ul>
+    
+    <% } else { %>
+      <div class="alert alert-info"><strong>No stories</strong></div>
+    <% } %>
+</div>
