@@ -1,4 +1,4 @@
-# node-hn-app
+# Overview
 
 This project is a simple express app for demonstrating testing and code coverage. The project is configured to use GCP services (Cloud Build, Container Registry, and GKE) to build, deploy and run the application on the cloud.
 
